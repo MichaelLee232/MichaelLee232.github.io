@@ -49,8 +49,8 @@
 				});
 
 				// add the rest of the keys here
-				const first20ToReverse = ['calm1', 'tense1'];
-				const last20ToReverse = ['pleasant2', 'restless2'];
+				const first20ToReverse = ['calm1', 'tense1', 'upset1', 'misfortunes1', 'comfortable1', 'jittery1', 'indecisive1', 'content1', 'steady1'];
+				const last20ToReverse = ['pleasant2', 'restless2', 'failure2', 'difficulties2', 'happy2', 'disturbing2', 'inadequate2', 'content2', 'steady2', 'interests2'];
 
 				let firstTotal = 0;
 				let secondTotal = 0;
@@ -150,7 +150,7 @@
 
 		var welcome = {
 			type: jsPsychHtmlKeyboardResponse,
-			stimulus: 'Instructions go here... <br><br> Press Space to continue.',
+			stimulus: "Welcome to our experiment! Please make sure you're sitting comfortably at a desk with adequate lighting. Ensure there are no distractions around you, and remove any cellphones or other devices from your vicinity.<br><br><br>In this experiment, you will be presented with many pairs of faces, after which you will be asked if you can notice any differences in duration between the two faces. Press 'y' on your keyboard for yes, and 'n' on your keyboard for no. After you go through each pair of faces, you will complete two surveys. Please make sure to go through until the very end!<br><br><br>Press Space to continue.",
 			choices: [' ']
 		};
 		timeline.push(welcome);
@@ -241,7 +241,7 @@
 
 		var node = {
 			timeline: [face_trial],
-			repetitions: 2 // TODO replace with 12
+			repetitions: 12 
 		};
 
 		timeline.push(node);
@@ -254,70 +254,73 @@
 			questions: [
 				{ prompt: 'I feel calm', name: 'calm1', labels: agree_likert_scale, required: true },
 				{ prompt: 'I feel secure', name: 'secure1', labels: agree_likert_scale, required: true },
-				{ prompt: 'I am tense', name: 'tense1', labels: agree_likert_scale, required: true }
-				// {
-				// 	prompt: 'I feel strained',
-				// 	name: 'strained1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// },
-				// { prompt: 'I feel at ease', name: 'ease1', labels: agree_likert_scale, required: true },
-				// { prompt: 'I feel upset', name: 'upset1', labels: agree_likert_scale, required: true },
-				// {
-				// 	prompt: 'I am presently worrying over possible misfortunes',
-				// 	name: 'misfortunes1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel satisfied',
-				// 	name: 'satisfied1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel frightened',
-				// 	name: 'frightened1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel comfortable',
-				// 	name: 'comfortable1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel self-confident',
-				// 	name: 'confident1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// },
-				// { prompt: 'I feel nervous', name: 'nervous1', labels: agree_likert_scale, required: true },
-				// { prompt: 'I am jittery', name: 'jittery1', labels: agree_likert_scale, required: true },
-				// {
-				// 	prompt: 'I feel indecisive',
-				// 	name: 'indecisive1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// },
-				// { prompt: 'I am relaxed', name: 'relaxed1', labels: agree_likert_scale, required: true },
-				// { prompt: 'I feel content', name: 'content1', labels: agree_likert_scale, required: true },
-				// { prompt: 'I am worried', name: 'worried1', labels: agree_likert_scale, required: true },
-				// {
-				// 	prompt: 'I feel confused',
-				// 	name: 'confused1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// },
-				// { prompt: 'I feel steady', name: 'steady1', labels: agree_likert_scale, required: true },
-				// {
-				// 	prompt: 'I feel pleasant',
-				// 	name: 'pleasant1',
-				// 	labels: agree_likert_scale,
-				// 	required: true
-				// }
-			]
+				{ prompt: 'I am tense', name: 'tense1', labels: agree_likert_scale, required: true },
+				 {
+				 	prompt: 'I feel strained',
+				 	name: 'strained1',
+					labels: agree_likert_scale,
+				 	required: true
+				 },
+				 { prompt: 'I feel at ease', name: 'ease1', labels: agree_likert_scale, required: true },
+				 { prompt: 'I feel upset', name: 'upset1', labels: agree_likert_scale, required: true },
+				 {
+				 	prompt: 'I am presently worrying over possible misfortunes',
+					name: 'misfortunes1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel satisfied',
+				 	name: 'satisfied1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel frightened',
+				 	name: 'frightened1',
+					labels: agree_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel comfortable',
+				 	name: 'comfortable1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel self-confident',
+				 	name: 'confident1',
+				 	labels: agree_likert_scale,
+					required: true
+				},
+				 { prompt: 'I feel nervous', name: 'nervous1', labels: agree_likert_scale, required: true },
+				 { prompt: 'I am jittery', name: 'jittery1', labels: agree_likert_scale, required: true },
+				 {
+					prompt: 'I feel indecisive',
+					name: 'indecisive1',
+					labels: agree_likert_scale,
+				 	required: true
+				 },
+				 { prompt: 'I am relaxed', name: 'relaxed1', labels: agree_likert_scale, required: true },
+				 { prompt: 'I feel content', name: 'content1', labels: agree_likert_scale, required: true },
+				 { prompt: 'I am worried', name: 'worried1', labels: agree_likert_scale, required: true },
+				 {
+				 	prompt: 'I feel confused',
+				 	name: 'confused1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				 },
+				 { prompt: 'I feel steady', name: 'steady1', labels: agree_likert_scale, required: true },
+				 {
+				 	prompt: 'I feel pleasant',
+				 	name: 'pleasant1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				}
+				
+			],
+							preamble: "<br><br>Please read through each statement thoroughly, and answer to the best of your ability on how much you agree with each statement.",
+
 		};
 		var survey_trial_2 = {
 			type: jsPsychSurveyLikert,
@@ -339,110 +342,123 @@
 					name: 'satisfied2',
 					labels: frequency_likert_scale,
 					required: true
-				}
-				// {
-				// 	prompt: 'I wish I could be as happy as others seem to be',
-				// 	name: 'happy2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel like a failure',
-				// 	name: 'failure2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel rested',
-				// 	name: 'rested2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: "I am 'calm, cool, and collected'",
-				// 	name: 'collected2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel that difficulties are piling up so that I cannot overcome them',
-				// 	name: 'difficulties2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: "I worry too much over something that really doesn't matter",
-				// 	name: 'worry2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// { prompt: 'I am happy', name: 'happy2', labels: frequency_likert_scale, required: true },
-				// {
-				// 	prompt: 'I have disturbing thoughts',
-				// 	name: 'disturbing2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I lack self-confidence',
-				// 	name: 'confidence2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel secure',
-				// 	name: 'secure2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I make decisions easily',
-				// 	name: 'easily2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I feel inadequate',
-				// 	name: 'inadequate2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I am content',
-				// 	name: 'content2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'Some unimportant thought runs through my mind and bothers me',
-				// 	name: 'unimportant2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: "I take disappointments so keenly that I can't put them out of my mind",
-				// 	name: 'disappointments2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt: 'I am a steady person',
-				// 	name: 'steady2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// },
-				// {
-				// 	prompt:
-				// 		'I get in a state of tension or turmoil as I think about my recent concerns and interests',
-				// 	name: 'interests2',
-				// 	labels: frequency_likert_scale,
-				// 	required: true
-				// }
-			]
+				},
+				 {
+				 	prompt: 'I wish I could be as happy as others seem to be',
+				 	name: 'happy2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				{
+				 	prompt: 'I feel like a failure',
+				 	name: 'failure2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				{
+				 	prompt: 'I feel rested',
+				 	name: 'rested2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: "I am 'calm, cool, and collected'",
+				 	name: 'collected2',
+				 	labels: frequency_likert_scale,
+					required: true
+				 },
+				{
+				 	prompt: 'I feel that difficulties are piling up so that I cannot overcome them',
+				 	name: 'difficulties2',
+				 	labels: frequency_likert_scale,
+					required: true
+				 },
+				 {
+				 	prompt: "I worry too much over something that really doesn't matter",
+				 	name: 'worry2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 { prompt: 'I am happy', name: 'happy2', labels: frequency_likert_scale, required: true },
+				 {
+				 	prompt: 'I have disturbing thoughts',
+				 	name: 'disturbing2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I lack self-confidence',
+				 	name: 'confidence2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel secure',
+				 	name: 'secure2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I make decisions easily',
+				 	name: 'easily2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel inadequate',
+				 	name: 'inadequate2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				},
+				 {
+				 	prompt: 'I am content',
+				 	name: 'content2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+					prompt: 'Some unimportant thought runs through my mind and bothers me',
+					name: 'unimportant2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: "I take disappointments so keenly that I can't put them out of my mind",
+				 	name: 'disappointments2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				},
+				{
+				 	prompt: 'I am a steady person',
+				 	name: 'steady2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+					prompt:
+				 		'I get in a state of tension or turmoil as I think about my recent concerns and interests',
+				 	name: 'interests2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 }
+
+			],
+										preamble: "<br><br>Please read through each statement thoroughly, and answer to the best of your ability on how much you agree with each statement.",
+
 		};
 
 		timeline.push(survey_trial_1);
 		timeline.push(survey_trial_2);
+
+
+var thankYouScreen = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "<p>Thank you for participating in our experiment!</p>",
+  choices: "NO_KEYS",
+  trial_duration: 50000
+};
+
+timeline.push(thankYouScreen)
 
 		// Start the experiment
 		jsPsych.run(timeline);
