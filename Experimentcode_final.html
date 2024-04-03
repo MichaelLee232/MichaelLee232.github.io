@@ -1,0 +1,466 @@
+<html>
+	<head>
+		<title>My experiment</title>
+		<script src="https://unpkg.com/jspsych@7.0.0"></script>
+		<script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.0.0"></script>
+		<script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.0.0"></script>
+		<script src="https://unpkg.com/@jspsych/plugin-preload@1.0.0"></script>
+		<script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.0.0"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+		<link href="https://unpkg.com/jspsych@7.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+	</head>
+	<script type="application/javascript">
+		const { createClient } = supabase;
+		const _supabase = createClient(
+			'https://mkawowjhperzvmtqkruu.supabase.co',
+			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXdvd2pocGVyenZtdHFrcnV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIwMTc0MzAsImV4cCI6MjAyNzU5MzQzMH0.SpC2-zC4sNGkpEo99BX5W2M-WHvE0nhypmpoHv_Iuqg'
+		);
+
+		const submit = async (results, firstTotal, secondTotal) => {
+			const { data, error } = await _supabase
+				.from('data')
+				.insert({
+					first_survey_total: firstTotal,
+					second_survey_total: secondTotal
+				})
+				.select('id')
+				.single();
+
+			await _supabase
+				.from('responses')
+				.insert(results.map((result) => ({ data_id: data.id, ...result })));
+		};
+
+		var jsPsych = initJsPsych({
+			on_finish: function () {
+				const { trials } = jsPsych.data.allData;
+				const [surveyResults1, surveyResults2] = trials.filter(
+					(trial) => trial.trial_type === 'survey-likert'
+				);
+				const results = [];
+				trials.forEach((trial, index) => {
+					if (trial.response === 'y') {
+						const { stimulus, durationAdjustment } = trials[index - 1];
+						results.push({
+							stimulus,
+							duration_adjustment: durationAdjustment
+						});
+					}
+				});
+
+				// add the rest of the keys here
+				const first20ToReverse = ['calm1', 'tense1', 'upset1', 'misfortunes1', 'comfortable1', 'jittery1', 'indecisive1', 'content1', 'steady1'];
+				const last20ToReverse = ['pleasant2', 'restless2', 'failure2', 'difficulties2', 'happy2', 'disturbing2', 'inadequate2', 'content2', 'steady2', 'interests2'];
+
+				let firstTotal = 0;
+				let secondTotal = 0;
+
+				for (const [key, value] of Object.entries(surveyResults1.response)) {
+					let points = value + 1;
+
+					if (first20ToReverse.includes(key)) {
+						switch (points) {
+							case 1:
+								points = 4;
+								break;
+							case 2:
+								points = 3;
+								break;
+							case 3:
+								points = 2;
+								break;
+							case 4:
+								points = 1;
+								break;
+						}
+					}
+					firstTotal += points;
+				}
+
+				for (const [key, value] of Object.entries(surveyResults2.response)) {
+					let points = value + 1;
+
+					if (last20ToReverse.includes(key)) {
+						switch (points) {
+							case 1:
+								points = 4;
+								break;
+							case 2:
+								points = 3;
+								break;
+							case 3:
+								points = 2;
+								break;
+							case 4:
+								points = 1;
+								break;
+						}
+					}
+					secondTotal += points;
+				}
+
+				submit(results, firstTotal, secondTotal);
+			}
+		});
+
+		var timeline = [];
+
+		var angryFaces = [
+			'004_o_m_a_a.jpg',
+			'066_y_m_a_a.jpg',
+			'066_y_m_a_b.jpg',
+			'004_o_m_a_b.jpg',
+			'079_o_f_a_a.jpg',
+			'079_o_f_a_b.jpg',
+			'116_m_m_a_a.jpg',
+			'116_m_m_a_b.jpg',
+			'140_y_f_a_a.jpg',
+			'140_y_f_a_b.jpg',
+			'168_m_f_a_a.jpg',
+			'168_m_f_a_b.jpg'
+		];
+
+		var neutralFaces = [
+			'004_o_m_n_a.jpg',
+			'066_y_m_n_a.jpg',
+			'066_y_m_n_b.jpg',
+			'004_o_m_n_b.jpg',
+			'079_o_f_n_a.jpg',
+			'079_o_f_n_b.jpg',
+			'116_m_m_n_a.jpg',
+			'116_m_m_n_b.jpg',
+			'140_y_f_n_a.jpg',
+		  '140_y_f_n_b.jpg',
+			'168_m_f_n_a.jpg',
+			'168_m_f_n_b.jpg'
+		];
+
+		// dynamically create image pairs
+		var imagePairs = angryFaces.map(function (e, i) {
+			return { angry: e, neutral: neutralFaces[i] };
+		});
+
+		var allImages = angryFaces.concat(neutralFaces);
+
+		var preload = {
+			type: jsPsychPreload,
+			images: allImages
+		};
+		timeline.push(preload);
+
+		var welcome = {
+			type: jsPsychHtmlKeyboardResponse,
+			stimulus: "Welcome to our experiment! Please make sure you're sitting comfortably at a desk with adequate lighting. Ensure there are no distractions around you, and remove any cellphones or other devices from your vicinity.<br><br><br>In this experiment, you will be presented with many pairs of faces, after which you will be asked if you can notice any differences in duration between the two faces. Press 'y' on your keyboard for yes, and 'n' on your keyboard for no. After you go through each pair of faces, you will complete two surveys. Please make sure to go through until the very end!<br><br><br>Press Space to continue.",
+			choices: [' ']
+		};
+		timeline.push(welcome);
+
+		var fixation = {
+			type: jsPsychHtmlKeyboardResponse,
+			stimulus: '<div style="font-size:60px;">+</div>',
+			choices: 'NO_KEYS',
+			trial_duration: 500
+		};
+
+		var durationAdjustment, imageOrder;
+		function extendDuration() {
+			if (durationAdjustment > 0) {
+				durationAdjustment += 50;
+			} else if (durationAdjustment < 0) {
+				durationAdjustment -= 50;
+			}
+		}
+		function resetDuration() {
+			durationAdjustment = Math.random() > 0.5 ? 50 : -50;
+		}
+
+		function getRandomImagePairIndex() {
+			return Math.floor(Math.random() * imagePairs.length);
+		}
+
+		function randomizeImageOrder() {
+			imageOrder = Math.random() > 0.5 ? ['angry', 'neutral'] : ['neutral', 'angry'];
+		}
+
+		function removeCurrentImageFromPairs() {
+			imagePairs.splice(currentImagePairIndex, 1);
+		}
+
+		var currentImagePairIndex = getRandomImagePairIndex();
+
+		resetDuration();
+		randomizeImageOrder();
+
+		var face_trial = {
+			timeline: [
+				fixation,
+				{
+					type: jsPsychImageKeyboardResponse,
+					stimulus: function () {
+						return imagePairs[currentImagePairIndex][imageOrder[0]];
+					},
+					stimulus_width: 750,
+					choices: 'NO_KEYS',
+					trial_duration: 1000
+				},
+				fixation,
+				{
+					type: jsPsychImageKeyboardResponse,
+					stimulus: function () {
+						return imagePairs[currentImagePairIndex][imageOrder[1]];
+					},
+					stimulus_width: 750,
+					choices: 'NO_KEYS',
+					trial_duration: function () {
+						return 1000 + durationAdjustment;
+					},
+					on_finish: function (data) {
+						data.durationAdjustment = durationAdjustment;
+					}
+				},
+				{
+					type: jsPsychHtmlKeyboardResponse,
+					stimulus:
+						'Did you notice a difference in the duration of the two faces shown? <br><br>Press "Y" for Yes or "N" for No.',
+					choices: ['y', 'n']
+				}
+			],
+			loop_function: function (data) {
+				var lastResponse = data.values().pop().response;
+				if (lastResponse == 'n') {
+					extendDuration();
+					return true;
+				} else {
+					removeCurrentImageFromPairs();
+					currentImagePairIndex = getRandomImagePairIndex();
+					resetDuration();
+					return false;
+				}
+			}
+		};
+
+		var node = {
+			timeline: [face_trial],
+			repetitions: 12 
+		};
+
+		timeline.push(node);
+
+		var agree_likert_scale = ['Not at all', 'Somewhat', 'Moderately so', 'Very Much so'];
+		var frequency_likert_scale = ['Almost Never', 'Sometimes', 'Often', 'Almost Always'];
+
+		var survey_trial_1 = {
+			type: jsPsychSurveyLikert,
+			questions: [
+				{ prompt: 'I feel calm', name: 'calm1', labels: agree_likert_scale, required: true },
+				{ prompt: 'I feel secure', name: 'secure1', labels: agree_likert_scale, required: true },
+				{ prompt: 'I am tense', name: 'tense1', labels: agree_likert_scale, required: true },
+				 {
+				 	prompt: 'I feel strained',
+				 	name: 'strained1',
+					labels: agree_likert_scale,
+				 	required: true
+				 },
+				 { prompt: 'I feel at ease', name: 'ease1', labels: agree_likert_scale, required: true },
+				 { prompt: 'I feel upset', name: 'upset1', labels: agree_likert_scale, required: true },
+				 {
+				 	prompt: 'I am presently worrying over possible misfortunes',
+					name: 'misfortunes1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel satisfied',
+				 	name: 'satisfied1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel frightened',
+				 	name: 'frightened1',
+					labels: agree_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel comfortable',
+				 	name: 'comfortable1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel self-confident',
+				 	name: 'confident1',
+				 	labels: agree_likert_scale,
+					required: true
+				},
+				 { prompt: 'I feel nervous', name: 'nervous1', labels: agree_likert_scale, required: true },
+				 { prompt: 'I am jittery', name: 'jittery1', labels: agree_likert_scale, required: true },
+				 {
+					prompt: 'I feel indecisive',
+					name: 'indecisive1',
+					labels: agree_likert_scale,
+				 	required: true
+				 },
+				 { prompt: 'I am relaxed', name: 'relaxed1', labels: agree_likert_scale, required: true },
+				 { prompt: 'I feel content', name: 'content1', labels: agree_likert_scale, required: true },
+				 { prompt: 'I am worried', name: 'worried1', labels: agree_likert_scale, required: true },
+				 {
+				 	prompt: 'I feel confused',
+				 	name: 'confused1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				 },
+				 { prompt: 'I feel steady', name: 'steady1', labels: agree_likert_scale, required: true },
+				 {
+				 	prompt: 'I feel pleasant',
+				 	name: 'pleasant1',
+				 	labels: agree_likert_scale,
+				 	required: true
+				}
+				
+			],
+							preamble: "<br><br>Please read through each statement thoroughly, and answer to the best of your ability on how much you agree with each statement.",
+
+		};
+		var survey_trial_2 = {
+			type: jsPsychSurveyLikert,
+			questions: [
+				{
+					prompt: 'I feel pleasant',
+					name: 'pleasant2',
+					labels: frequency_likert_scale,
+					required: true
+				},
+				{
+					prompt: 'I feel nervous and restless',
+					name: 'restless2',
+					labels: frequency_likert_scale,
+					required: true
+				},
+				{
+					prompt: 'I feel satisfied with myself',
+					name: 'satisfied2',
+					labels: frequency_likert_scale,
+					required: true
+				},
+				 {
+				 	prompt: 'I wish I could be as happy as others seem to be',
+				 	name: 'happy2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				{
+				 	prompt: 'I feel like a failure',
+				 	name: 'failure2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				{
+				 	prompt: 'I feel rested',
+				 	name: 'rested2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: "I am 'calm, cool, and collected'",
+				 	name: 'collected2',
+				 	labels: frequency_likert_scale,
+					required: true
+				 },
+				{
+				 	prompt: 'I feel that difficulties are piling up so that I cannot overcome them',
+				 	name: 'difficulties2',
+				 	labels: frequency_likert_scale,
+					required: true
+				 },
+				 {
+				 	prompt: "I worry too much over something that really doesn't matter",
+				 	name: 'worry2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 { prompt: 'I am happy', name: 'happy2', labels: frequency_likert_scale, required: true },
+				 {
+				 	prompt: 'I have disturbing thoughts',
+				 	name: 'disturbing2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I lack self-confidence',
+				 	name: 'confidence2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel secure',
+				 	name: 'secure2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I make decisions easily',
+				 	name: 'easily2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: 'I feel inadequate',
+				 	name: 'inadequate2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				},
+				 {
+				 	prompt: 'I am content',
+				 	name: 'content2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+					prompt: 'Some unimportant thought runs through my mind and bothers me',
+					name: 'unimportant2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+				 	prompt: "I take disappointments so keenly that I can't put them out of my mind",
+				 	name: 'disappointments2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				},
+				{
+				 	prompt: 'I am a steady person',
+				 	name: 'steady2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 },
+				 {
+					prompt:
+				 		'I get in a state of tension or turmoil as I think about my recent concerns and interests',
+				 	name: 'interests2',
+				 	labels: frequency_likert_scale,
+				 	required: true
+				 }
+
+			],
+										preamble: "<br><br>Please read through each statement thoroughly, and answer to the best of your ability on how much you agree with each statement.",
+
+		};
+
+		timeline.push(survey_trial_1);
+		timeline.push(survey_trial_2);
+
+
+var thankYouScreen = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "<p>Thank you for participating in our experiment!</p>",
+  choices: "NO_KEYS",
+  trial_duration: 50000
+};
+
+timeline.push(thankYouScreen)
+
+		// Start the experiment
+		jsPsych.run(timeline);
+	</script>
+</html>
